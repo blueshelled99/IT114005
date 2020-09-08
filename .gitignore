@@ -1,0 +1,5 @@
+desktop.ini
+myprivatecreds.*
+*.log
+.idea/*
+*.ignore
