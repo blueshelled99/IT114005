@@ -39,7 +39,7 @@ public class NumberGuesserPart2 {
 						int range = 9 + ((level - 1) * 5);
 						System.out.println("Welcome to level " + level);
 						System.out.println(
-								"I picked a random number between 1-" + range + ", let's see if you can guess.");
+								"I picked a random number between 1-" + (range + 1) + ", let's see if you can guess.");
 						number = new Random().nextInt(range) + 1;
 					} else {
 						System.out.println("That's wrong");
@@ -52,8 +52,8 @@ public class NumberGuesserPart2 {
 								level = 1;
 							}
 							int range = 9 + ((level - 1) * 5);
-							System.out.println(
-									"I picked a random number between 1-" + range + ", let's see if you can guess.");
+							System.out.println("I picked a random number between 1-" + (range + 1)
+									+ ", let's see if you can guess.");
 							number = new Random().nextInt(range) + 1;
 						}
 					}
