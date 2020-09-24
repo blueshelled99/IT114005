@@ -28,10 +28,11 @@ public class NumberGuesserHW {
 	private void win() {
 		System.out.println("That's right!");
 		level++;// level up!
-		saveLevel();
 		strikes = 0;
 		System.out.println("Welcome to level " + level);
 		number = getNumber(level);
+		saveLevel(); // moved this down at the end to keep a more accurate save state after each
+						// action
 	}
 
 	private void lose() {
@@ -42,10 +43,15 @@ public class NumberGuesserHW {
 		if (level < 1) {
 			level = 1;
 		}
-		saveLevel();
 		number = getNumber(level);
+		saveLevel(); // moved this down at the end to keep a more accurate save state after each
+						// action
 	}
 
+	// i think i could solve the hw by just modifying this function so that it saves
+	// when we quit from the session but i want to make it so that if the user
+	// closes the terminal improperly that it saves automatically like any video
+	// game would now
 	private void processCommands(String message) {
 		if (message.equalsIgnoreCase("quit")) {
 			System.out.println("Tired of playing? No problem, see you next time.");
@@ -75,6 +81,7 @@ public class NumberGuesserHW {
 				}
 			}
 		}
+		saveLevel(); // need to record strikes and number here
 	}
 
 	private int getGuess(String message) {
@@ -91,6 +98,8 @@ public class NumberGuesserHW {
 	private void saveLevel() {
 		try (FileWriter fw = new FileWriter(saveFile)) {
 			fw.write("" + level);// here we need to convert it to a String to record correctly
+			fw.write("\n" + strikes); // added a new line to record the number of strikes
+			fw.write("\n" + number); // added a new line to record what the number was
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -105,6 +114,10 @@ public class NumberGuesserHW {
 		try (Scanner reader = new Scanner(file)) {
 			while (reader.hasNextLine()) {
 				int _level = reader.nextInt();
+				int _strikes = reader.nextInt(); // added a way to read the file to get the number of strikes
+				strikes = _strikes; // sets strikes after loading from save file
+				int _number = reader.nextInt(); // added a way to read the file to get the number
+				number = _number; // sets number after loading from save file
 				if (_level > 1) {
 					level = _level;
 					break;
@@ -120,15 +133,42 @@ public class NumberGuesserHW {
 		return level > 1;
 	}
 
+	// making a reset function here that is prompted when the program runs
+	private void reset() {
+		System.out.println("Do you want to start at level 1 (Y/N)?");
+		Scanner inp = new Scanner(System.in);
+		String msg = inp.nextLine();
+		if (msg.equalsIgnoreCase("y")) {
+			try (FileWriter rst = new FileWriter(saveFile)) {
+				rst.write("" + 1);
+				rst.write("\n" + 0);
+				number = new Random().nextInt(9) + 1;
+				rst.write("\n" + number);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
 	void run() {
 		try (Scanner input = new Scanner(System.in);) {
 			System.out.println("Welcome to Number Guesser 4.0!");
-			System.out.println("I'll ask you to guess a number between a range, and you'll have " + maxStrikes
-					+ " attempts to guess.");
+			reset(); // added the reset function
+			loadLevel(); // need to use here to show the correct amount of guesses left
+			System.out.println("I'll ask you to guess a number between a range, and you'll have "
+					+ (maxStrikes - strikes) + " attempts to guess."); // updated string to output the correct amount of
+																		// strikes left
 			if (loadLevel()) {
-				System.out.println("Successfully loaded level " + level + " let's continue then");
+				System.out.println("Successfully loaded level " + level + ", let's continue then");
 			}
-			number = getNumber(level);
+			// added this from the getNumber function to make it easier to understand when
+			// the program runs the first time
+			System.out.println("Welcome to level " + level);
+			int rangez = 9 + ((level - 1) * 5);
+			System.out.println("I picked a random number between 1-" + (rangez + 1) + ", let's see if you can guess.");
+			// number = getNumber(level); this is not necessary anymore i think since you
+			// are picking up from the last session
 			isRunning = true;
 			while (input.hasNext()) {
 				String message = input.nextLine();
