@@ -129,6 +129,6 @@ public class BinaryTree {
 		bfs(tree_a);
 
 		System.out.println("\n Pre-Order Search");
-		// System.out.println(dfsPreOrder_search(tree_a, "F"));
+		System.out.println(dfsPreOrder_search(tree_a, "F"));
 	}
 }
