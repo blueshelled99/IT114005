@@ -47,24 +47,16 @@ public class BinaryTree {
 	}
 
 	// TODO change to true/false
-	public static String dfsPreOrder_search(BinaryTree tree, String search) {
-		if (tree == null) {
-			return null;
-		}
-		System.out.println(tree);
-		if (tree.getName().equals(search)) {
-			System.out.println("Found: " + search);
-			return tree.toString();
-		}
-		if (tree.getLeft() != null) {
-			return dfsPreOrder_search(tree.getLeft(), search);
-		}
-		if (tree.getRight() != null) {
-			return dfsPreOrder_search(tree.getRight(), search);
-		}
-		return null;
-	}
-
+	/*
+	 * public static String dfsPreOrder_search(BinaryTree tree, String search) {
+	 * if(tree == null) { return null; } System.out.println(tree);
+	 * if(tree.getName().equals(search)) { System.out.println("Found: " + search);
+	 * return tree.toString(); } if(tree.getLeft() != null) { return
+	 * dfsPreOrder_search(tree.getLeft(), search); } if(tree.getRight() != null) {
+	 * return dfsPreOrder_search(tree.getRight(), search); }
+	 * 
+	 * }
+	 */
 	public static void dfsInOrder(BinaryTree tree) {
 		if (tree.getLeft() != null) {
 			dfsInOrder(tree.getLeft());
@@ -129,6 +121,6 @@ public class BinaryTree {
 		bfs(tree_a);
 
 		System.out.println("\n Pre-Order Search");
-		System.out.println(dfsPreOrder_search(tree_a, "F"));
+		// System.out.println(dfsPreOrder_search(tree_a, "F"));
 	}
 }
