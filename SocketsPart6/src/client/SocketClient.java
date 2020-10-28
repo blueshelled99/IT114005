@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 import server.Payload;
 import server.PayloadType;
 
-//part 6-1
+//part 6
 public class SocketClient {
 	private static Socket server;
 	private static Thread fromServerThread;
