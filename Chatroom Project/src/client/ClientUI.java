@@ -213,6 +213,8 @@ public class ClientUI extends JFrame implements Event {
 	void addMessage(String str) {
 		JEditorPane entry = new JEditorPane();
 		entry.setEditable(false);
+		// should allow me to use html tags in the client
+		entry.setContentType("text/html");
 		// entry.setLayout(null);
 		entry.setText(str);
 		Dimension d = new Dimension(textArea.getSize().width, calcHeightForText(str));
