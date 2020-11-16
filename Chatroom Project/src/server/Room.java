@@ -3,6 +3,8 @@ package server;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+//imported random
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -15,6 +17,9 @@ public class Room implements AutoCloseable {
 	private final static String COMMAND_TRIGGER = "/";
 	private final static String CREATE_ROOM = "createroom";
 	private final static String JOIN_ROOM = "joinroom";
+	// adding commands for flip and roll
+	private final static String FLIP = "flip";
+	private final static String ROLL = "roll";
 
 	public Room(String name) {
 		this.name = name;
@@ -119,6 +124,22 @@ public class Room implements AutoCloseable {
 					joinRoom(roomName, client);
 					wasCommand = true;
 					break;
+				// adding /roll command
+				case ROLL:
+					String[] dice = new String[] { "1", "2", "3", "4", "5", "6" };
+					Random random = new Random();
+					int index = random.nextInt(dice.length);
+					sendCommand(client, "rolled " + dice[index]);
+					wasCommand = true;
+					break;
+				// adding /flip command
+				case FLIP:
+					String[] coin = new String[] { "heads", "tails" };
+					Random random2 = new Random();
+					int index2 = random2.nextInt(coin.length);
+					sendCommand(client, "flipped " + coin[index2]);
+					wasCommand = true;
+					break;
 				}
 			}
 		} catch (Exception e) {
@@ -137,6 +158,15 @@ public class Room implements AutoCloseable {
 				iter.remove();
 				log.log(Level.INFO, "Removed client " + c.getId());
 			}
+		}
+	}
+
+	// edited sendconnection status to get rid of bug with user list ui
+	protected void sendCommand(ServerThread client, String message) {
+		Iterator<ServerThread> iter = clients.iterator();
+		while (iter.hasNext()) {
+			ServerThread c = iter.next();
+			c.send(client.getClientName(), message);
 		}
 	}
 
