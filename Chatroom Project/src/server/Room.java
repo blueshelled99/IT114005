@@ -17,9 +17,11 @@ public class Room implements AutoCloseable {
 	private final static String COMMAND_TRIGGER = "/";
 	private final static String CREATE_ROOM = "createroom";
 	private final static String JOIN_ROOM = "joinroom";
-	// adding commands for flip and roll
+	// adding commands for flip, roll, and html
 	private final static String FLIP = "flip";
 	private final static String ROLL = "roll";
+	private final static String HTML = "html";
+	private final static String COLOR = "color";
 
 	public Room(String name) {
 		this.name = name;
@@ -138,6 +140,37 @@ public class Room implements AutoCloseable {
 					Random random2 = new Random();
 					int index2 = random2.nextInt(coin.length);
 					sendCommand(client, "flipped " + coin[index2]);
+					wasCommand = true;
+					break;
+				// adding html command
+				case HTML:
+					String erased = message.replaceAll("/html", "");
+					// replacing b tags here for bold
+					erased = erased.replaceAll("!b", "<b>");
+					erased = erased.replaceAll("/b", "</b>");
+					// replacing u tags for underline
+					erased = erased.replaceAll("!u", "<u>");
+					erased = erased.replaceAll("/u", "</u>");
+					// replacing i tags for italicize
+					erased = erased.replaceAll("!i", "<i>");
+					erased = erased.replaceAll("/i", "</i>");
+					sendCommand(client, erased);
+					wasCommand = true;
+					break;
+				case COLOR:
+					String fontColor = comm2[1];
+					String eraseCommand = message.replaceAll("/color " + fontColor, "");
+					eraseCommand = eraseCommand.replaceAll("!c", "<font color= " + "\"" + fontColor + "\"" + ">");
+					eraseCommand = eraseCommand.replaceAll("/c", "</font>");
+					eraseCommand = eraseCommand.replaceAll("!b", "<b>");
+					eraseCommand = eraseCommand.replaceAll("/b", "</b>");
+					// replacing u tags for underline
+					eraseCommand = eraseCommand.replaceAll("!u", "<u>");
+					eraseCommand = eraseCommand.replaceAll("/u", "</u>");
+					// replacing i tags for italicize
+					eraseCommand = eraseCommand.replaceAll("!i", "<i>");
+					eraseCommand = eraseCommand.replaceAll("/i", "</i>");
+					sendCommand(client, eraseCommand);
 					wasCommand = true;
 					break;
 				}
