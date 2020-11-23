@@ -17,11 +17,12 @@ public class Room implements AutoCloseable {
 	private final static String COMMAND_TRIGGER = "/";
 	private final static String CREATE_ROOM = "createroom";
 	private final static String JOIN_ROOM = "joinroom";
-	// adding commands for flip, roll, and html
+	// adding commands for flip, roll, @, and html
 	private final static String FLIP = "flip";
 	private final static String ROLL = "roll";
 	private final static String HTML = "html";
 	private final static String COLOR = "color";
+	private final static String AT_SIGN = "@";
 
 	public Room(String name) {
 		this.name = name;
@@ -160,8 +161,9 @@ public class Room implements AutoCloseable {
 				case COLOR:
 					String fontColor = comm2[1];
 					String eraseCommand = message.replaceAll("/color " + fontColor, "");
-					eraseCommand = eraseCommand.replaceAll("!c", "<font color= " + "\"" + fontColor + "\"" + ">");
+					eraseCommand = eraseCommand.replaceAll("!c", "<font color=" + "\"" + fontColor + "\"" + ">");
 					eraseCommand = eraseCommand.replaceAll("/c", "</font>");
+					// replacing b tags for bold
 					eraseCommand = eraseCommand.replaceAll("!b", "<b>");
 					eraseCommand = eraseCommand.replaceAll("/b", "</b>");
 					// replacing u tags for underline
@@ -171,6 +173,12 @@ public class Room implements AutoCloseable {
 					eraseCommand = eraseCommand.replaceAll("!i", "<i>");
 					eraseCommand = eraseCommand.replaceAll("/i", "</i>");
 					sendCommand(client, eraseCommand);
+					wasCommand = true;
+					break;
+				case AT_SIGN:
+					String uName = comm2[1];
+					String deleteAT = message.replaceAll("@ " + uName, "");
+					sendPrivate(client, uName, deleteAT);
 					wasCommand = true;
 					break;
 				}
@@ -200,6 +208,17 @@ public class Room implements AutoCloseable {
 		while (iter.hasNext()) {
 			ServerThread c = iter.next();
 			c.send(client.getClientName(), message);
+		}
+	}
+
+	// creating a function for privately sending messages to a user
+	protected void sendPrivate(ServerThread client, String recipient, String message) {
+		Iterator<ServerThread> iter = clients.iterator();
+		while (iter.hasNext()) {
+			ServerThread c = iter.next();
+			if (c.toString() == recipient) {
+				c.send(client.getClientName(), message);
+			}
 		}
 	}
 
