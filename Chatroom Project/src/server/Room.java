@@ -131,7 +131,7 @@ public class Room implements AutoCloseable {
 					String[] dice = new String[] { "1", "2", "3", "4", "5", "6" };
 					Random random = new Random();
 					int index = random.nextInt(dice.length);
-					sendCommand(client, "rolled " + dice[index]);
+					sendCommand(client, "<b>rolled " + "<font color=\"red\">" + dice[index] + "</font></b>");
 					wasCommand = true;
 					break;
 				// adding /flip command
@@ -139,7 +139,7 @@ public class Room implements AutoCloseable {
 					String[] coin = new String[] { "heads", "tails" };
 					Random random2 = new Random();
 					int index2 = random2.nextInt(coin.length);
-					sendCommand(client, "flipped " + coin[index2]);
+					sendCommand(client, "<b>flipped " + "<font color=\"red\">" + coin[index2] + "</font></b>");
 					wasCommand = true;
 					break;
 				// adding html command
