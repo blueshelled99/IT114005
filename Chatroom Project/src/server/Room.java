@@ -17,11 +17,12 @@ public class Room implements AutoCloseable {
 	private final static String COMMAND_TRIGGER = "/";
 	private final static String CREATE_ROOM = "createroom";
 	private final static String JOIN_ROOM = "joinroom";
-	// adding commands for flip, roll, and html
+	// adding commands for flip, roll, @, and html
 	private final static String FLIP = "flip";
 	private final static String ROLL = "roll";
 	private final static String HTML = "html";
 	private final static String COLOR = "color";
+	private final static String AT = "@";
 
 	public Room(String name) {
 		this.name = name;
@@ -160,8 +161,9 @@ public class Room implements AutoCloseable {
 				case COLOR:
 					String fontColor = comm2[1];
 					String eraseCommand = message.replaceAll("/color " + fontColor, "");
-					eraseCommand = eraseCommand.replaceAll("!c", "<font color= " + "\"" + fontColor + "\"" + ">");
+					eraseCommand = eraseCommand.replaceAll("!c", "<font color=" + "\"" + fontColor + "\"" + ">");
 					eraseCommand = eraseCommand.replaceAll("/c", "</font>");
+					// replacing b tags for bold
 					eraseCommand = eraseCommand.replaceAll("!b", "<b>");
 					eraseCommand = eraseCommand.replaceAll("/b", "</b>");
 					// replacing u tags for underline
@@ -173,8 +175,29 @@ public class Room implements AutoCloseable {
 					sendCommand(client, eraseCommand);
 					wasCommand = true;
 					break;
+				/*
+				 * @username private message command experiment case AT_SIGN: String uName =
+				 * comm2[1]; String deleteAT = message.replaceAll("/dm " + uName, "");
+				 * sendPrivate(client, uName, deleteAT); wasCommand = true; break;
+				 */
 				}
 			}
+
+			// added @user message private dm feature here
+			if (message.indexOf(AT) > -1) {
+				String[] trigger = message.split(AT);
+				log.log(Level.INFO, message);
+				String part1 = trigger[1];
+				String[] comm2 = part1.split(" ");
+				String uName = comm2[0];
+				if (uName != null) {
+					uName = uName.toLowerCase();
+				}
+				String delUName = message.replaceAll("@" + uName, "");
+				sendPrivate(client, uName, delUName);
+				wasCommand = true;
+			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -200,6 +223,17 @@ public class Room implements AutoCloseable {
 		while (iter.hasNext()) {
 			ServerThread c = iter.next();
 			c.send(client.getClientName(), message);
+		}
+	}
+
+	// creating a function for privately sending messages to a user
+	protected void sendPrivate(ServerThread client, String recipient, String message) {
+		Iterator<ServerThread> iter = clients.iterator();
+		while (iter.hasNext()) {
+			ServerThread c = iter.next();
+			if (c.getClientName().equals(recipient) || c.getClientName() == client.getClientName()) {
+				c.send(client.getClientName(), message);
+			}
 		}
 	}
 
