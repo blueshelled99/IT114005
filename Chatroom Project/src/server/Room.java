@@ -22,7 +22,7 @@ public class Room implements AutoCloseable {
 	private final static String ROLL = "roll";
 	private final static String HTML = "html";
 	private final static String COLOR = "color";
-	private final static String AT_SIGN = "@";
+	private final static String AT = "@";
 
 	public Room(String name) {
 		this.name = name;
@@ -132,7 +132,7 @@ public class Room implements AutoCloseable {
 					String[] dice = new String[] { "1", "2", "3", "4", "5", "6" };
 					Random random = new Random();
 					int index = random.nextInt(dice.length);
-					sendCommand(client, "rolled " + dice[index]);
+					sendCommand(client, "<b>rolled " + "<font color=\"red\">" + dice[index] + "</font></b>");
 					wasCommand = true;
 					break;
 				// adding /flip command
@@ -140,7 +140,7 @@ public class Room implements AutoCloseable {
 					String[] coin = new String[] { "heads", "tails" };
 					Random random2 = new Random();
 					int index2 = random2.nextInt(coin.length);
-					sendCommand(client, "flipped " + coin[index2]);
+					sendCommand(client, "<b>flipped " + "<font color=\"red\">" + coin[index2] + "</font></b>");
 					wasCommand = true;
 					break;
 				// adding html command
@@ -175,14 +175,29 @@ public class Room implements AutoCloseable {
 					sendCommand(client, eraseCommand);
 					wasCommand = true;
 					break;
-				case AT_SIGN:
-					String uName = comm2[1];
-					String deleteAT = message.replaceAll("@ " + uName, "");
-					sendPrivate(client, uName, deleteAT);
-					wasCommand = true;
-					break;
+				/*
+				 * @username private message command experiment case AT_SIGN: String uName =
+				 * comm2[1]; String deleteAT = message.replaceAll("/dm " + uName, "");
+				 * sendPrivate(client, uName, deleteAT); wasCommand = true; break;
+				 */
 				}
 			}
+
+			// added @user message private dm feature here
+			if (message.indexOf(AT) > -1) {
+				String[] trigger = message.split(AT);
+				log.log(Level.INFO, message);
+				String part1 = trigger[1];
+				String[] comm2 = part1.split(" ");
+				String uName = comm2[0];
+				if (uName != null) {
+					uName = uName.toLowerCase();
+				}
+				String delUName = message.replaceAll("@" + uName, "");
+				sendPrivate(client, uName, delUName);
+				wasCommand = true;
+			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -216,7 +231,7 @@ public class Room implements AutoCloseable {
 		Iterator<ServerThread> iter = clients.iterator();
 		while (iter.hasNext()) {
 			ServerThread c = iter.next();
-			if (c.toString() == recipient) {
+			if (c.getClientName().equals(recipient) || c.getClientName() == client.getClientName()) {
 				c.send(client.getClientName(), message);
 			}
 		}
