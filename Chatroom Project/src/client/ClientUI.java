@@ -106,6 +106,8 @@ public class ClientUI extends JFrame implements Event {
 				String name = username.getText();
 				if (name != null && name.length() > 0) {
 					SocketClient.setUsername(name);
+					// trying to change the title of the window to better show who's console it is
+					self.setTitle(self.getTitle() + " - " + name);
 					self.next();
 				}
 			}
@@ -294,7 +296,7 @@ public class ClientUI extends JFrame implements Event {
 	}
 
 	public static void main(String[] args) {
-		ClientUI ui = new ClientUI("My UI");
+		ClientUI ui = new ClientUI("Chatroom UI");
 		if (ui != null) {
 			log.log(Level.FINE, "Started");
 		}
