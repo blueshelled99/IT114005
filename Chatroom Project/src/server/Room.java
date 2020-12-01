@@ -17,12 +17,14 @@ public class Room implements AutoCloseable {
 	private final static String COMMAND_TRIGGER = "/";
 	private final static String CREATE_ROOM = "createroom";
 	private final static String JOIN_ROOM = "joinroom";
-	// adding commands for flip, roll, @, and html
+	// adding commands for flip, roll, @, mute, unmute, and html
 	private final static String FLIP = "flip";
 	private final static String ROLL = "roll";
 	private final static String HTML = "html";
 	private final static String COLOR = "color";
 	private final static String AT = "@";
+	private final static String MUTE = "mute";
+	private final static String UNMUTE = "unmute";
 
 	public Room(String name) {
 		this.name = name;
@@ -175,6 +177,18 @@ public class Room implements AutoCloseable {
 					sendCommand(client, eraseCommand);
 					wasCommand = true;
 					break;
+				case MUTE:
+					String MUser = comm2[1];
+					client.mutedList.add(MUser);
+					// maybe add a notification that the user was muted
+					wasCommand = true;
+					break;
+				case UNMUTE:
+					String UMUser = comm2[1];
+					client.mutedList.remove(UMUser);
+					// maybe add a notification that the user was unmuted
+					wasCommand = true;
+					break;
 				/*
 				 * @username private message command experiment case AT_SIGN: String uName =
 				 * comm2[1]; String deleteAT = message.replaceAll("/dm " + uName, "");
@@ -254,10 +268,12 @@ public class Room implements AutoCloseable {
 		Iterator<ServerThread> iter = clients.iterator();
 		while (iter.hasNext()) {
 			ServerThread client = iter.next();
-			boolean messageSent = client.send(sender.getClientName(), message);
-			if (!messageSent) {
-				iter.remove();
-				log.log(Level.INFO, "Removed client " + client.getId());
+			if (!client.isMuted(sender.getClientName())) {
+				boolean messageSent = client.send(sender.getClientName(), message);
+				if (!messageSent) {
+					iter.remove();
+					log.log(Level.INFO, "Removed client " + client.getId());
+				}
 			}
 		}
 	}
