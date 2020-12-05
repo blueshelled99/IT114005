@@ -178,15 +178,25 @@ public class Room implements AutoCloseable {
 					wasCommand = true;
 					break;
 				case MUTE:
-					String MUser = comm2[1];
-					client.mutedList.add(MUser);
-					// maybe add a notification that the user was muted
+					String[] MUser = comm2[1].split(AT);
+					String MUser1 = MUser[1];
+					// added if statement to prevent duplicate issues
+					if (!client.mutedList.contains(MUser1)) {
+						client.mutedList.add(MUser1);
+					}
+					// add a notification that the user was muted
+					muteStatus(client, MUser1);
 					wasCommand = true;
 					break;
 				case UNMUTE:
-					String UMUser = comm2[1];
-					client.mutedList.remove(UMUser);
-					// maybe add a notification that the user was unmuted
+					String[] UMUser = comm2[1].split(AT);
+					String UMUser1 = UMUser[1];
+					// added if statement to prevent duplicate issues
+					if (client.mutedList.contains(UMUser1)) {
+						client.mutedList.remove(UMUser1);
+					}
+					// add a notification that the user was unmuted
+					unmuteStatus(client, UMUser1);
 					wasCommand = true;
 					break;
 				/*
@@ -198,7 +208,7 @@ public class Room implements AutoCloseable {
 			}
 
 			// added @user message private dm feature here
-			if (message.indexOf(AT) > -1) {
+			if (message.indexOf(AT) == 0) {
 				String[] trigger = message.split(AT);
 				log.log(Level.INFO, message);
 				String part1 = trigger[1];
@@ -247,6 +257,26 @@ public class Room implements AutoCloseable {
 			ServerThread c = iter.next();
 			if (c.getClientName().equals(recipient) || c.getClientName() == client.getClientName()) {
 				c.send(client.getClientName(), message);
+			}
+		}
+	}
+
+	protected void muteStatus(ServerThread client, String recipient) {
+		Iterator<ServerThread> iter = clients.iterator();
+		while (iter.hasNext()) {
+			ServerThread c = iter.next();
+			if (c.getClientName().equals(recipient)) {
+				c.send(client.getClientName(), "<b><i>has muted you</b></i>");
+			}
+		}
+	}
+
+	protected void unmuteStatus(ServerThread client, String recipient) {
+		Iterator<ServerThread> iter = clients.iterator();
+		while (iter.hasNext()) {
+			ServerThread c = iter.next();
+			if (c.getClientName().equals(recipient)) {
+				c.send(client.getClientName(), "<b><i>has unmuted you</b></i>");
 			}
 		}
 	}
