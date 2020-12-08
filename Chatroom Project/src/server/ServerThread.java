@@ -1,11 +1,16 @@
 package server;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -19,6 +24,48 @@ public class ServerThread extends Thread {
 	private final static Logger log = Logger.getLogger(ServerThread.class.getName());
 	List<String> mutedList = new ArrayList<String>();
 
+	// adding saving mute list feature here
+	public void saveMutes() {
+		try (FileWriter fw = new FileWriter(getClientName() + "muteList.txt")) {
+			fw.write("" + getClientName() + ":");
+			Iterator<String> iter = mutedList.iterator();
+			while (iter.hasNext()) {
+				String m = iter.next();
+				fw.write(m + ",");
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	// adding loading mute list feature here
+	public void loadMute() {
+		File file = new File(getClientName() + "muteList.txt");
+		if (file.exists()) {
+			try (Scanner reader = new Scanner(file)) {
+				while (reader.hasNextLine()) {
+					String _user = reader.next();
+					String[] userLine = _user.split(":");
+					String user = userLine[0];
+					if (user.equals(getClientName())) {
+						String mutedUsers = userLine[1];
+						String[] muteArray = mutedUsers.split(",");
+						for (int i = 0; i < muteArray.length; i++) {
+							if (!mutedList.contains(muteArray[i])) {
+								mutedList.add(muteArray[i]);
+							}
+						}
+					}
+				}
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
+		}
+	}
+
+	// added mute feature here
 	public boolean isMuted(String clientName) {
 		return mutedList.contains(clientName);
 	}
