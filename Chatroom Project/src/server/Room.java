@@ -42,6 +42,7 @@ public class Room implements AutoCloseable {
 
 	protected synchronized void addClient(ServerThread client) {
 		client.setCurrentRoom(this);
+		client.loadMute();
 		if (clients.indexOf(client) > -1) {
 			log.log(Level.INFO, "Attempting to add a client that already exists");
 		} else {
@@ -186,6 +187,7 @@ public class Room implements AutoCloseable {
 					}
 					// add a notification that the user was muted
 					muteStatus(client, MUser1);
+					client.saveMutes();
 					wasCommand = true;
 					break;
 				case UNMUTE:
@@ -197,6 +199,7 @@ public class Room implements AutoCloseable {
 					}
 					// add a notification that the user was unmuted
 					unmuteStatus(client, UMUser1);
+					client.saveMutes();
 					wasCommand = true;
 					break;
 				/*
