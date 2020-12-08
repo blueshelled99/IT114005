@@ -8,6 +8,7 @@ import java.awt.FontMetrics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -39,7 +40,7 @@ public class ClientUI extends JFrame implements Event {
 	JPanel userPanel;
 	List<User> users = new ArrayList<User>();
 	private final static Logger log = Logger.getLogger(ClientUI.class.getName());
-	Dimension windowSize = new Dimension(400, 400);
+	Dimension windowSize = new Dimension(600, 400);
 
 	public ClientUI(String title) {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -152,7 +153,18 @@ public class ClientUI extends JFrame implements Event {
 			}
 
 		});
+
+		// adding export button
+		JButton exportB = new JButton("export");
+		exportB.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				export();
+			}
+		});
+
 		input.add(button);
+		input.add(exportB);
 		panel.add(input, BorderLayout.SOUTH);
 		this.add(panel);
 	}
@@ -252,6 +264,26 @@ public class ClientUI extends JFrame implements Event {
 		lock = userPanel.getSize();
 		userPanel.setMaximumSize(lock);
 		setVisible(true);
+	}
+
+	// adding export feature
+	public void export() {
+		try (FileWriter fw = new FileWriter(self.getTitle() + ".txt")) {
+			int t = textArea.getComponentCount();
+			for (int i = 0; i < t; i++) {
+				JEditorPane text = (JEditorPane) textArea.getComponent(i);
+				if (text != null) {
+					String line = text.getText();
+					String[] linearr = line.split("<body>");
+					String[] linearr2 = linearr[1].split("</body>");
+					String line2 = linearr2[0];
+					fw.write("" + line2 + "\n");
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	@Override
