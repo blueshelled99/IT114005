@@ -327,6 +327,22 @@ public class ClientUI extends JFrame implements Event {
 		}
 	}
 
+	@Override
+	public void onSetMuted(String clientName, boolean isMuted) {
+		Iterator<User> iter = users.iterator();
+		while (iter.hasNext()) {
+			User u = iter.next();
+			if (u.getName().equalsIgnoreCase(clientName)) {
+				if (isMuted) {
+					u.setName("<color=gray>" + clientName + "</color>");
+				} else {
+					u.setName("<color=black>" + clientName + "</color");
+				}
+				break;
+			}
+		}
+	}
+
 	public static void main(String[] args) {
 		ClientUI ui = new ClientUI("Chatroom UI");
 		if (ui != null) {

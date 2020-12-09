@@ -161,6 +161,15 @@ public class ServerThread extends Thread {
 		}
 	}
 
+	// adding ismuted function
+	public boolean sendIsMuted(String client, boolean isMuted) {
+		Payload p = new Payload();
+		p.setPayloadType(PayloadType.IS_MUTED);
+		p.setFlag(isMuted);
+		p.setClientName(client);
+		return sendPayload(p);
+	}
+
 	/***
 	 * Process payloads we receive from our client
 	 * 

@@ -271,6 +271,10 @@ public class Room implements AutoCloseable {
 			if (c.getClientName().equals(recipient)) {
 				c.send(client.getClientName(), "<b><i>has muted you</b></i>");
 			}
+			// adding sendIsMuted to update userlist
+			if (c.getClientName().equals(client.getClientName())) {
+				c.sendIsMuted(c.getClientName(), c.isMuted(c.getClientName()));
+			}
 		}
 	}
 
@@ -280,6 +284,10 @@ public class Room implements AutoCloseable {
 			ServerThread c = iter.next();
 			if (c.getClientName().equals(recipient)) {
 				c.send(client.getClientName(), "<b><i>has unmuted you</b></i>");
+			}
+			// adding sendIsMuted to update userlist
+			if (c.getClientName().equals(client.getClientName())) {
+				c.sendIsMuted(c.getClientName(), c.isMuted(c.getClientName()));
 			}
 		}
 	}
